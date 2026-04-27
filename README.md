@@ -3,4 +3,4 @@ A RegTech platform for supplier sustainability scoring, LkSG compliance, and sup
 
 database created 
 
-.gitlab-c added
+mirror.yml added
