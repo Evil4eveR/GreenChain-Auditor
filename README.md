@@ -1,3 +1,4 @@
 # GreenChain-Auditor
-A RegTech platform for supplier sustainability scoring, LkSG compliance, and supply-chain risk intelligence.
-database created
+A RegTech platform for supplier sustainability scoring, LkSG compliance, and supply-chain risk intelligence. 
+database created 
+.gitlab-c added
