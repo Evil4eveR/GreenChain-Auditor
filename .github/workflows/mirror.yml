@@ -1,0 +1,22 @@
+name: Mirror to GitLab
+
+on:
+  push:
+    branches: [ "main", "master" ] # Triggers on push to these branches
+  workflow_dispatch: # Allows you to run it manually to test
+
+jobs:
+  mirror_task:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Required to get all history for mirroring
+
+      - name: Mirror to GitLab
+        uses: pixta-dev/repository-mirroring-action@v1
+        with:
+          # Replace the URL below with your GitLab path
+          target_repo_url: https://oauth2:${{ secrets.GITLAB_TOKEN }}@gitlab.com/Evil4eveR/GreenChain-Auditor.git
+          
