@@ -4,6 +4,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 -- 1. Users Table (Stores user information, including email, password hash, role, and timestamps for tracking when users are created)
 CREATE TABLE If NOT EXISTS users (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    full_name VARCHAR (255),
     email VARCHAR(255) UNIQUE NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
     role VARCHAR(50) DEFAULT 'Auditor',
@@ -38,7 +39,7 @@ CREATE TABLE If NOT EXISTS imports (
 -- 4. Audit Logs Table (Tracks all changes to suppliers, including who made the change and what was changed)
 CREATE TABLE If NOT EXISTS audit_logs (
     id BIGSERIAL PRIMARY KEY,
-    supplier_id UUID REFERENCES suppliers(id) ON DELETE SET NULL,
+    supplier_id UUID REFERENCES suppliers(id)
     user_id UUID REFERENCES users(id) ON DELETE SET NULL, -- Added user_id to see who did the action!
     action VARCHAR(255) NOT NULL,
     previous_values JSONB,
