@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GreenChain Auditor</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 1200px; margin: 0 auto; padding: 20px; }
+        h1 { color: #2d6a4f; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background-color: #2d6a4f; color: white; }
+        tr:hover { background-color: #f5f5f5; }
+        .risk-high { color: #d00000; font-weight: bold; }
+        .risk-medium { color: #f48c06; }
+        .risk-low { color: #2d6a4f; }
+        .loading { color: #666; font-style: italic; }
+        .error { color: #d00000; padding: 20px; background: #ffebee; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <h1>🌿 GreenChain Auditor</h1>
+    <p>Supplier Sustainability Dashboard</p>
+    
+    <div id="status" class="loading">Loading suppliers...</div>
+    <table id="suppliersTable" style="display: none;">
+        <thead>
+            <tr>
+                <th>Company</th>
+                <th>Country</th>
+                <th>Industry</th>
+                <th>CO2 (tons/year)</th>
+                <th>Compliance Score</th>
+                <th>Risk Level</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody id="tableBody">
+        </tbody>
+    </table>
+
+    <script>
+        // Fetch suppliers from your backend
+        fetch('http://localhost:3001/suppliers')
+            .then(response => response.json())
+            .then(result => {
+                const statusDiv = document.getElementById('status');
+                const table = document.getElementById('suppliersTable');
+                const tbody = document.getElementById('tableBody');
+
+                if (!result.success || result.data.length === 0) {
+                    statusDiv.textContent = 'No suppliers found.';
+                    return;
+                }
+
+                statusDiv.style.display = 'none';
+                table.style.display = 'table';
+
+                result.data.forEach(supplier => {
+                    // Calculate risk level based on score
+                    let riskClass = 'risk-high';
+                    let riskText = 'HIGH';
+                    const score = parseFloat(supplier.social_compliance_score);
+                    
+                    if (score >= 80) {
+                        riskClass = 'risk-low';
+                        riskText = 'LOW';
+                    } else if (score >= 50) {
+                        riskClass = 'risk-medium';
+                        riskText = 'MEDIUM';
+                    }
+
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td><strong>${supplier.legal_name}</strong><br>
+                            <small>${supplier.registration_number}</small></td>
+                        <td>${supplier.country}</td>
+                        <td>${supplier.industry_sector || '-'}</td>
+                        <td>${supplier.co2_emissions_annual ? parseFloat(supplier.co2_emissions_annual).toLocaleString() : '-'}</td>
+                        <td>${supplier.social_compliance_score || '-'}</td>
+                        <td class="${riskClass}">${riskText}</td>
+                        <td>${supplier.status}</td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            })
+            .catch(error => {
+                document.getElementById('status').innerHTML = 
+                    `<div class="error">Error loading data: ${error.message}<br>
+                     Make sure the backend server is running on port 3001.</div>`;
+            });
+    </script>
+</body>
+</html>
